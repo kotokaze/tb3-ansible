@@ -1,0 +1,6 @@
+TAEGET_ARCH: arm64
+
+LOCALE: en_US.UTF-8
+TZ: Asia/Tokyo
+
+ROS2_REPO_URL: http://packages.ros.org/ros2/ubuntu

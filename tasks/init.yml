@@ -1,0 +1,31 @@
+- name: Purge unattended upgrade
+  become: true
+  ansible.builtin.apt:
+    name: unattended-upgrades
+    state: absent
+    purge: yes
+    autoremove: yes
+
+- name: Install dev tools
+  become: true
+  ansible.builtin.apt:
+    name:
+      - avahi-daemon
+      - avahi-utils
+      - language-pack-ja
+      - x11-apps
+    update_cache: yes
+
+- name: Generate locale
+  community.general.locale_gen:
+    name: '{{ LOCALE }}'
+    state: present
+
+- name: Set locale
+  become: true
+  command:
+    cmd: 'update-locale LANG={{ LOCALE }}'
+
+- name: Set timezone
+  community.general.command:
+    name: '{{ TZ }}'

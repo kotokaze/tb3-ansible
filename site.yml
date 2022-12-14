@@ -1,0 +1,6 @@
+---
+- hosts: all
+  vars_files: [vars/init.yml]
+  tasks:
+    - include_tasks: tasks/init.yml
+    - include_tasks: tasks/ros2-foxy.yml

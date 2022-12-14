@@ -1,0 +1,57 @@
+
+# sudo apt update && sudo apt install curl software-properties-common
+- name: Install dependencies for setting up sources
+  become: yes
+  ansible.builtin.apt:
+    name:
+      - curl
+      - software-properties-common
+      - python3-apt  # for ansible.builtin.apt_repository
+    update_cache: yes
+
+- name: Add universe repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} universe"
+    state: present
+
+- name: Download Ros GPG key
+  become: true
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/ros/rosdistro/master/ros.key
+    dest: /usr/share/keyrings/ros-archive-keyring.gpg
+
+- name: Add ROS 2 apt repository
+  become: true
+  ansible.builtin.apt_repository:
+    file: /etc/apt/sources.list.d/ros2.list
+    repo: "deb [arch={{ TARGET_ARCH }} signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] {{ ROS2_REPO_URL }} {{ ansible_distribution_release }} main"
+    state: present
+
+- name: Install Ros foxy and colcon
+  become: true
+  ansible.builtin.apt:
+    name:
+      - ros-foxy-base
+      - python3-argcomplete
+      - ros-dev-tools
+    update_cache: yes
+
+- name: Add source script to bashrc
+  ansible.builtin.blockinfile:
+    path: '{{ ansible_env.HOME }}/.bashrc'
+    block: |
+      ROS2_INSTALL=/opt/ros/foxy
+      ROS2_WS=/home/{{ ansible_user }}/ros2_ws
+      function ros2-foxy() {
+        . $ROS2_INSTALL/setup.bash
+
+        if [ ! -d $ROS2_WS ]; then
+          mkdir -p $ROS2_WS/src
+          cd $ROS2_WS
+          colcon build
+        fi
+
+        cd $ROS2_WS
+        . install/setup.bash
+      }
