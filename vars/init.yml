@@ -1,4 +1,4 @@
-TAEGET_ARCH: arm64
+TARGET_ARCH: arm64
 
 LOCALE: en_US.UTF-8
 TZ: Asia/Tokyo
