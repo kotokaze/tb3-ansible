@@ -42,7 +42,7 @@
     path: '{{ ansible_env.HOME }}/.bashrc'
     block: |
       ROS2_INSTALL=/opt/ros/foxy
-      ROS2_WS=/home/{{ ansible_user }}/ros2_ws
+      ROS2_WS={{ ansible_env.HOME }}/ws/ros2_foxy
       function ros2-foxy() {
         . $ROS2_INSTALL/setup.bash
 
